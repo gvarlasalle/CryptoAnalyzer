@@ -196,9 +196,6 @@
                         <option value="2048" selected>RSA-2048</option>
                         <option value="4096">RSA-4096</option>
                     </select>
-                    <button class="btn btn-secondary" onclick="generateAnalysisRSAKey()">
-                        <span class="material-icons">vpn_key</span> Generar Par de Claves
-                    </button>
                 </div>
 
                 <div class="form-group">
@@ -209,6 +206,10 @@
                     </select>
                     <small>OAEP es el estándar seguro actual. PKCS#1 v1.5 tiene vulnerabilidades conocidas.</small>
                 </div>
+
+                <button class="btn btn-secondary" onclick="generateAnalysisRSAKey()">
+                   <span class="material-icons">vpn_key</span> Generar Par de Claves
+                </button>
 
                 <div id="rsa-analyze-keys" style="display: none; margin-bottom: 20px;">
                     <div class="form-group">
@@ -299,4 +300,5 @@
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modern.js') }}"></script>
 </body>
+
 </html>
