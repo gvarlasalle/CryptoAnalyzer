@@ -13,6 +13,7 @@ from modules.modern_crypto import AESEvaluator, RSAEvaluator
 from modules.modern_crypto import StrengthEvaluator, VulnerabilityDetector
 import io
 import base64
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'cryptoanalyzer-secret-key-2024'
@@ -311,8 +312,11 @@ def benchmark_rsa():
 
 print("TODAS LAS RUTAS DEFINIDAS")
 if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 10000))  # Render asigna este puerto
+
     print("=" * 50)
     print("Iniciando CryptoAnalyzer...")
-    print("Abre tu navegador en: http://localhost:5000")
+    print(f"Servidor corriendo en: http://0.0.0.0:{port}")
     print("=" * 50)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+
+    app.run(host='0.0.0.0', port=port)
