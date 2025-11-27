@@ -210,7 +210,7 @@ function generateExecutiveSummary(data) {
                 <div class="summary-item">
                     <span class="material-icons">warning</span>
                     <h3>Issues Detectados</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: ${totalIssues > 0 ? '#ffff00' : '#00ff00'};">${totalIssues}</p>
+                    <p style="font-size: 24px; font-weight: bold; color: ${totalIssues > 0 ? '#000000ff' : '#00ff00'};">${totalIssues}</p>
                 </div>
             </div>
 
@@ -582,4 +582,5 @@ function clearStoredData() {
         document.getElementById('preview-btn').style.display = 'none';
         document.getElementById('print-btn').style.display = 'none';
     }
+
 }
