@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criptoanálisis - CryptoAnalyzer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Ciberseguridad</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/classic">Cifrados Clásicos</a></li>
+                <li><a href="/analysis" class="active">Criptoanálisis</a></li>
+                <li><a href="/modern">Evaluación de Fortaleza</a></li>
+                <li><a href="/benchmark">Rendimiento</a></li>
+                <li><a href="/report">Reportes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>Criptoanálisis</h1>
+            <p>Herramientas para romper cifrados clásicos sin conocer la clave</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('frequency')">
+                Análisis de Frecuencia
+            </button>
+            <button class="tab-button" onclick="showTab('bruteforce-caesar')">
+                Fuerza Bruta - César
+            </button>
+            <button class="tab-button" onclick="showTab('vigenere-break')">
+                Romper Vigenère
+            </button>
+        </div>
+
+        <!-- ANÁLISIS DE FRECUENCIA -->
+        <div id="frequency" class="tab-content active">
+            <div class="cipher-section">
+                <h2>Análisis de Frecuencia</h2>
+                <p class="description">
+                    Analiza cuántas veces aparece cada letra en un texto cifrado y lo compara con las frecuencias
+                    normales del español. Útil para identificar patrones y posibles desplazamientos en César.
+                </p>
+
+                <div class="form-group">
+                    <label for="freq-text">Texto cifrado a analizar:</label>
+                    <textarea id="freq-text" 
+                              rows="8" 
+                              placeholder="Pega aquí el texto cifrado que quieres analizar..."
+                              oninput="handleTextInput(event)"
+                              onpaste="handlePaste(event, 'letters-spaces')"></textarea>
+                    <small>Ejemplo: Si tienes un texto cifrado con César, pégalo aquí para ver patrones</small>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="analyzeFrequency()">
+                        <span class="material-icons">analytics</span> Analizar Frecuencias
+                    </button>
+                    <button class="btn btn-tertiary" onclick="clearFrequency()">
+                        <span class="material-icons">clear</span> Limpiar
+                    </button>
+                </div>
+
+                <!-- RESULTADOS -->
+                <div id="frequency-results" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">bar_chart</span> Resultados del Análisis</h3>
+                    
+                    <!-- Estadísticas generales -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="material-icons">text_fields</span>
+                            <div>
+                                <h4 id="freq-total-letters">0</h4>
+                                <p>Letras analizadas</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="material-icons">star</span>
+                            <div>
+                                <h4 id="freq-most-common">-</h4>
+                                <p>Letra más frecuente</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="material-icons">functions</span>
+                            <div>
+                                <h4 id="freq-chi-squared">0</h4>
+                                <p>Chi-cuadrado</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico -->
+                    <div id="frequency-chart" style="margin: 2rem 0;">
+                        <img id="frequency-chart-img" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                    </div>
+
+                    <!-- Tabla de frecuencias -->
+                    <div class="frequency-table-container">
+                        <h4><span class="material-icons">table_chart</span> Top 10 Letras Más Frecuentes</h4>
+                        <table class="frequency-table" id="frequency-table">
+                            <thead>
+                                <tr>
+                                    <th>Posición</th>
+                                    <th>Letra</th>
+                                    <th>Frecuencia</th>
+                                    <th>Esperado (Español)</th>
+                                    <th>Interpretación</th>
+                                </tr>
+                            </thead>
+                            <tbody id="frequency-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Sugerencias -->
+                    <div class="info-box" style="margin-top: 2rem;">
+                        <h4><span class="material-icons">lightbulb</span> Interpretación</h4>
+                        <div id="frequency-interpretation"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FUERZA BRUTA CÉSAR -->
+        <div id="bruteforce-caesar" class="tab-content">
+            <div class="cipher-section">
+                <h2>Fuerza Bruta - César</h2>
+                <p class="description">
+                    Prueba automáticamente las 26 claves posibles del cifrado César y te muestra
+                    cuáles tienen más probabilidad de ser correctas según las frecuencias del español.
+                </p>
+
+                <div class="alert-box alert-warning">
+                    <span class="material-icons">security</span>
+                    <div>
+                        <strong>¿Por qué funciona?</strong>
+                        César solo tiene 26 claves posibles (desplazamientos 0-25). Probarlas todas toma segundos.
+                        Por eso César es extremadamente inseguro.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="brute-caesar-text">Texto cifrado con César:</label>
+                    <textarea id="brute-caesar-text" 
+                              rows="6" 
+                              placeholder="Pega aquí el texto cifrado con César..."
+                              oninput="handleTextInput(event)"
+                              onpaste="handlePaste(event, 'letters-spaces')"></textarea>
+                    <small>Ejemplo: "KROD PXQGR" → El sistema probará los 26 desplazamientos</small>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="bruteForceCaesar()">
+                        <span class="material-icons">lock_open</span> Romper Cifrado
+                    </button>
+                    <button class="btn btn-tertiary" onclick="clearBruteCaesar()">
+                        <span class="material-icons">clear</span> Limpiar
+                    </button>
+                </div>
+
+                <!-- RESULTADOS -->
+                <div id="brute-caesar-results" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">done_all</span> Top 10 Candidatos (Ordenados por Probabilidad)</h3>
+                    
+                    <div class="alert-box alert-info">
+                        <span class="material-icons">info</span>
+                        <div>
+                            <strong>Chi-cuadrado:</strong> Número que indica qué tan similar es el texto al español.
+                            Menor valor = más probable que sea correcto.
+                        </div>
+                    </div>
+
+                    <div id="brute-caesar-candidates" class="candidates-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROMPER VIGENÈRE -->
+        <div id="vigenere-break" class="tab-content">
+            <div class="cipher-section">
+                <h2>Romper Cifrado Vigenère</h2>
+                <p class="description">
+                    Rompe el cifrado Vigenère en dos pasos: primero estima la longitud de la clave usando
+                    el Índice de Coincidencia, luego determina cuál es la clave mediante análisis de frecuencia.
+                </p>
+
+                <div class="alert-box alert-warning">
+                    <span class="material-icons">warning</span>
+                    <div>
+                        <strong>Requisito:</strong>
+                        Necesitas al menos 100 caracteres de texto cifrado para resultados confiables.
+                        Textos más largos (300+ caracteres) dan mejores resultados.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="vigenere-break-text">Texto cifrado con Vigenère:</label>
+                    <textarea id="vigenere-break-text" 
+                              rows="8" 
+                              placeholder="Pega aquí el texto cifrado con Vigenère (mínimo 100 caracteres)..."
+                              oninput="handleTextInput(event)"
+                              onpaste="handlePaste(event, 'letters-spaces')"></textarea>
+                    <small>Cuanto más largo el texto, más preciso será el análisis</small>
+                </div>
+
+                <!-- PASO 1: Estimar longitud -->
+                <div class="step-section">
+                    <h3><span class="material-icons">filter_1</span> Paso 1: Estimar longitud de la clave</h3>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="estimateVigenereLength()">
+                            <span class="material-icons">straighten</span> Estimar Longitud
+                        </button>
+                    </div>
+
+                    <div id="vigenere-length-results" class="result-box" style="display: none;">
+                        <h4><span class="material-icons">analytics</span> Longitudes Más Probables</h4>
+                        <div id="vigenere-length-list" class="length-candidates"></div>
+                        
+                        <div class="info-box" style="margin-top: 1rem;">
+                            <h4><span class="material-icons">info</span> ¿Cómo funciona el IC?</h4>
+                            <p>
+                                El Índice de Coincidencia (IC) mide qué tan repetitivas son las letras.
+                                Para español, IC ≈ 0.065. Si la longitud de clave es correcta, cada grupo
+                                tendrá un IC cercano a 0.065.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASO 2: Estimar clave -->
+                <div class="step-section">
+                    <h3><span class="material-icons">filter_2</span> Paso 2: Determinar la clave</h3>
+                    
+                    <div class="form-group">
+                        <label for="vigenere-key-length">Longitud de la clave:</label>
+                        <input type="number" 
+                               id="vigenere-key-length" 
+                               min="1" 
+                               max="20" 
+                               value="5"
+                               placeholder="Ej: 5">
+                        <small>Usa la longitud sugerida del Paso 1</small>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="estimateVigenereKey()">
+                            <span class="material-icons">vpn_key</span> Determinar Clave
+                        </button>
+                    </div>
+
+                    <div id="vigenere-key-results" class="result-box" style="display: none;">
+                        <h4><span class="material-icons">done</span> Clave Estimada</h4>
+                        <div class="key-result">
+                            <div class="key-display">
+                                <span class="material-icons">vpn_key</span>
+                                <strong id="vigenere-estimated-key">-</strong>
+                            </div>
+                        </div>
+
+                        <h4 style="margin-top: 2rem;"><span class="material-icons">visibility</span> Vista Previa del Descifrado</h4>
+                        <div class="result-content" id="vigenere-decrypted-preview"></div>
+
+                        <div class="info-box" style="margin-top: 1rem;">
+                            <h4><span class="material-icons">help_outline</span> ¿La clave es correcta?</h4>
+                            <p>
+                                Lee la vista previa del texto descifrado. Si tiene sentido en español, la clave es correcta.
+                                Si no, prueba con otra longitud del Paso 1.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>CryptoAnalyzer - Proyecto Final de Ciberseguridad</p>
+            <p>Universidad La Salle - Arequipa</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+</body>
+</html>

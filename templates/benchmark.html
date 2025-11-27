@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparación de Rendimiento - CryptoAnalyzer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Ciberseguridad</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/classic">Cifrados Clásicos</a></li>
+                <li><a href="/analysis">Criptoanálisis</a></li>
+                <li><a href="/modern">Evaluación de Fortaleza</a></li>
+                <li><a href="/benchmark" class="active">Rendimiento</a></li>
+                <li><a href="/report">Reportes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>Comparación de Rendimiento</h1>
+            <p>Análisis de velocidad y eficiencia de algoritmos criptográficos</p>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Configuración -->
+        <div class="cipher-section">
+            <h2>Configuración de Prueba</h2>
+            <p class="description">
+                Configura los parámetros para medir el rendimiento de diferentes algoritmos criptográficos.
+            </p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="benchmark-text">Texto de Prueba:</label>
+                    <textarea id="benchmark-text" rows="4" placeholder="Ingresa el texto...">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</textarea>
+                    <small>Tamaño: <span id="text-size">0</span> bytes</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="benchmark-iterations">Número de Iteraciones:</label>
+                    <select id="benchmark-iterations">
+                        <option value="10">10 iteraciones (Rápido)</option>
+                        <option value="50">50 iteraciones (Medio)</option>
+                        <option value="100" selected>100 iteraciones (Preciso)</option>
+                        <option value="500">500 iteraciones (Muy preciso)</option>
+                    </select>
+                    <small>Mayor número = resultados más precisos pero toma más tiempo</small>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4><span class="material-icons">info</span> Sobre las Pruebas:</h4>
+                <ul>
+                    <li>Se mide el tiempo de cifrado y descifrado en <strong>milisegundos (ms)</strong></li>
+                    <li>Cada algoritmo se ejecuta múltiples veces para obtener un promedio confiable</li>
+                    <li>Los resultados dependen del hardware y carga del sistema</li>
+                    <li>Para RSA se usa un texto limitado debido a restricciones del algoritmo</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('aes-benchmark')">
+                <span class="material-icons">speed</span> Benchmark AES
+            </button>
+            <button class="tab-button" onclick="showTab('rsa-benchmark')">
+                <span class="material-icons">speed</span> Benchmark RSA
+            </button>
+            <button class="tab-button" onclick="showTab('comparison')">
+                <span class="material-icons">compare_arrows</span> Comparación Global
+            </button>
+        </div>
+
+        <!-- AES BENCHMARK -->
+        <div id="aes-benchmark" class="tab-content active">
+            <div class="cipher-section">
+                <h2>Rendimiento AES</h2>
+                <p class="description">
+                    Comparación de velocidad entre AES-128, AES-192 y AES-256 en modo CBC.
+                </p>
+
+                <button class="btn btn-primary" onclick="runAESBenchmark()">
+                    <span class="material-icons">play_arrow</span> Ejecutar Benchmark AES
+                </button>
+
+                <div id="aes-benchmark-loading" class="loading-box" style="display: none;">
+                    <span class="material-icons spinning">sync</span>
+                    <p>Ejecutando benchmark AES...</p>
+                </div>
+
+                <div id="aes-benchmark-result" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">bar_chart</span> Resultados AES</h3>
+                    
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Algoritmo</th>
+                                <th>Tiempo Cifrado (ms)</th>
+                                <th>Tiempo Descifrado (ms)</th>
+                                <th>Tiempo Total (ms)</th>
+                                <th>Velocidad</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aes-benchmark-tbody"></tbody>
+                    </table>
+
+                    <div style="margin-top: 30px;">
+                        <canvas id="aes-chart"></canvas>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 20px;">
+                        <h4><span class="material-icons">analytics</span> Análisis:</h4>
+                        <div id="aes-analysis"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RSA BENCHMARK -->
+        <div id="rsa-benchmark" class="tab-content">
+            <div class="cipher-section">
+                <h2>Rendimiento RSA</h2>
+                <p class="description">
+                    Comparación de velocidad entre RSA-1024, RSA-2048 y RSA-4096.
+                    <br><strong>⚠️ Nota:</strong> RSA es significativamente más lento que AES.
+                </p>
+
+                <button class="btn btn-primary" onclick="runRSABenchmark()">
+                    <span class="material-icons">play_arrow</span> Ejecutar Benchmark RSA
+                </button>
+
+                <div id="rsa-benchmark-loading" class="loading-box" style="display: none;">
+                    <span class="material-icons spinning">sync</span>
+                    <p>Ejecutando benchmark RSA... (puede tardar)</p>
+                </div>
+
+                <div id="rsa-benchmark-result" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">bar_chart</span> Resultados RSA</h3>
+                    
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Algoritmo</th>
+                                <th>Tiempo Cifrado (ms)</th>
+                                <th>Tiempo Descifrado (ms)</th>
+                                <th>Tiempo Total (ms)</th>
+                                <th>Velocidad</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rsa-benchmark-tbody"></tbody>
+                    </table>
+
+                    <div style="margin-top: 30px;">
+                        <canvas id="rsa-chart"></canvas>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 20px;">
+                        <h4><span class="material-icons">analytics</span> Análisis:</h4>
+                        <div id="rsa-analysis"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPARACIÓN GLOBAL -->
+        <div id="comparison" class="tab-content">
+            <div class="cipher-section">
+                <h2>Comparación Global</h2>
+                <p class="description">
+                    Comparación directa entre todos los algoritmos probados.
+                </p>
+
+                <button class="btn btn-primary" onclick="runFullBenchmark()">
+                    <span class="material-icons">play_arrow</span> Ejecutar Benchmark Completo
+                </button>
+
+                <div id="full-benchmark-loading" class="loading-box" style="display: none;">
+                    <span class="material-icons spinning">sync</span>
+                    <p>Ejecutando todos los benchmarks...</p>
+                </div>
+
+                <div id="comparison-result" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">compare_arrows</span> Comparación de Todos los Algoritmos</h3>
+                    
+                    <!-- Resumen -->
+                    <div class="comparison-summary">
+                        <div class="summary-card">
+                            <span class="material-icons">flash_on</span>
+                            <h4>Más Rápido</h4>
+                            <div id="fastest-algo"></div>
+                        </div>
+                        <div class="summary-card">
+                            <span class="material-icons">security</span>
+                            <h4>Más Seguro</h4>
+                            <div id="most-secure-algo"></div>
+                        </div>
+                        <div class="summary-card">
+                            <span class="material-icons">balance</span>
+                            <h4>Mejor Balance</h4>
+                            <div id="best-balance-algo"></div>
+                        </div>
+                    </div>
+
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Algoritmo</th>
+                                <th>Tipo</th>
+                                <th>Tiempo Total (ms)</th>
+                                <th>Velocidad Relativa</th>
+                                <th>Recomendación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-tbody"></tbody>
+                    </table>
+
+                    <div style="margin-top: 30px;">
+                        <canvas id="comparison-chart"></canvas>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 20px;">
+                        <h4><span class="material-icons">lightbulb</span> Conclusiones:</h4>
+                        <div id="comparison-conclusions"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>CryptoAnalyzer - Proyecto Final de Ciberseguridad</p>
+            <p>Universidad La Salle - Arequipa</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/benchmark.js') }}"></script>
+</body>
+</html>

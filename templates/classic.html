@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifrados Clásicos - CryptoAnalyzer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Ciberseguridad</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/classic" class="active">Cifrados Clásicos</a></li>
+                <li><a href="/analysis">Criptoanálisis</a></li>
+                <li><a href="/modern">Evaluación de Fortaleza</a></li>
+                <li><a href="/benchmark">Rendimiento</a></li>
+                <li><a href="/report">Reportes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>Cifrados Clásicos</h1>
+            <p>Implementación de cifrados históricos: César, Vigenère y Playfair</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('caesar')">
+                César
+            </button>
+            <button class="tab-button" onclick="showTab('vigenere')">
+                Vigenère
+            </button>
+            <button class="tab-button" onclick="showTab('playfair')">
+                Playfair
+            </button>
+        </div>
+
+        <!-- CIFRADO CÉSAR -->
+        <div id="caesar" class="tab-content active">
+            <div class="cipher-section">
+                <h2>Cifrado César</h2>
+                <p class="description">
+                    El cifrado César es uno de los métodos de cifrado más antiguos y simples. 
+                    Desplaza cada letra del alfabeto un número fijo de posiciones. El alfabeto tiene 26 letras,
+                    por lo que solo existen 26 desplazamientos posibles (0-25).
+                </p>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="caesar-text">Texto (solo A-Z y espacios):</label>
+                        <textarea id="caesar-text" 
+                                rows="6" 
+                                placeholder="Ingresa el texto aquí... (se normalizará automáticamente)"
+                                oninput="handleTextInput(event)"
+                                onpaste="handlePaste(event, 'letters-spaces')"></textarea>
+                        <small>Ejemplo: "Niño español" → "Nino espanol"</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="caesar-shift">Desplazamiento (0-25):</label>
+                        <input type="number" 
+                            id="caesar-shift" 
+                            min="0" 
+                            max="25" 
+                            value="3" 
+                            required
+                            oninput="if(this.value > 25) this.value = 25; if(this.value < 0) this.value = 0;"
+                            onpaste="handlePaste(event, 'numbers')">
+                        <small>0 = sin cambio | 3 = ROT3 (A→D) | 13 = ROT13 (A→N) | 25 = inverso de 1</small>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="caesarEncrypt()">
+                        <span class="material-icons">lock</span> Cifrar
+                    </button>
+                    <button class="btn btn-secondary" onclick="caesarDecrypt()">
+                        <span class="material-icons">key</span> Descifrar
+                    </button>
+                    <button class="btn btn-tertiary" onclick="clearCaesar()">
+                        <span class="material-icons">clear</span> Limpiar
+                    </button>
+                </div>
+
+                <div id="caesar-result" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">done</span> Resultado:</h3>
+                    <div class="result-content" id="caesar-result-text"></div>
+                    <button class="btn btn-small" onclick="copyToClipboard('caesar-result-text')">
+                        <span class="material-icons">content_copy</span> Copiar
+                    </button>
+                </div>
+
+                <div class="info-box">
+                    <h4><span class="material-icons">info</span> Información:</h4>
+                    <ul>
+                        <li>Desplazamiento: número de posiciones que se mueve cada letra</li>
+                        <li>Ejemplo: Con desplazamiento 3, A se convierte en D</li>
+                        <li>Extremadamente vulnerable a ataques de fuerza bruta (solo 26 claves posibles)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CIFRADO VIGENÈRE -->
+        <div id="vigenere" class="tab-content">
+            <div class="cipher-section">
+                <h2>Cifrado Vigenère</h2>
+                <p class="description">
+                    El cifrado Vigenère utiliza una clave alfabética donde cada letra representa un desplazamiento basado en el alfabeto (A=0, B=1, C=2, ..., Z=25). La clave se repite a lo largo del texto si es más corta, o se recorta si es más larga. Por ejemplo, si la clave es ABC y el texto es HELLO, el primer desplazamiento es A (0), el segundo es B (1), el tercero es C (2), y luego la clave se repite para el resto del texto.<br>
+                    El cifrado es más seguro que el cifrado César, ya que utiliza diferentes desplazamientos para cada letra, pero es vulnerable a análisis como el Índice de Coincidencia (IC).
+                </p>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="vigenere-text">Texto (solo A-Z y espacios):</label>
+                        <textarea id="vigenere-text" 
+                                rows="6" 
+                                placeholder="Ingresa el texto aquí... (se normalizará automáticamente)"
+                                oninput="handleTextInput(event)"
+                                onpaste="handlePaste(event, 'letters-spaces')"></textarea>
+                        <small>Ejemplo: "Año 2024" → "Ano " (números eliminados)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vigenere-key">Clave (solo letras A-Z):</label>
+                        <input type="text" 
+                            id="vigenere-key" 
+                            placeholder="Ej: CLAVE, SECRETO" 
+                            pattern="[A-Za-z]+"
+                            maxlength="30"
+                            oninput="this.value = this.value.replace(/[^A-Za-z]/g, '')"
+                            onpaste="handlePaste(event, 'letters')"
+                            title="Solo letras A-Z permitidas (sin Ñ)">
+                        <small>
+                            <strong>Solo A-Z (sin Ñ):</strong> Cada letra es un desplazamiento (A=0, B=1, ..., Z=25).
+                        </small>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="vigenereEncrypt()">
+                        <span class="material-icons">lock</span> Cifrar
+                    </button>
+                    <button class="btn btn-secondary" onclick="vigenereDecrypt()">
+                        <span class="material-icons">key</span> Descifrar
+                    </button>
+                    <button class="btn btn-tertiary" onclick="clearVigenere()">
+                        <span class="material-icons">clear</span> Limpiar
+                    </button>
+                </div>
+
+                <div id="vigenere-result" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">done</span> Resultado:</h3>
+                    <div class="result-content" id="vigenere-result-text"></div>
+                    <button class="btn btn-small" onclick="copyToClipboard('vigenere-result-text')">
+                        <span class="material-icons">content_copy</span> Copiar
+                    </button>
+                </div>
+
+                <div class="info-box">
+                    <h4><span class="material-icons">info</span> Información:</h4>
+                    <ul>
+                        <li>La clave se repite para coincidir con la longitud del texto</li>
+                        <li>Claves largas y aleatorias proporcionan mayor seguridad</li>
+                        <li>Vulnerable al método de Kasiski y análisis de IC</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CIFRADO PLAYFAIR -->
+        <div id="playfair" class="tab-content">
+            <div class="cipher-section">
+                <h2>Cifrado Playfair</h2>
+                <p class="description">
+                    El cifrado Playfair utiliza una matriz 5x5 para cifrar pares de letras (digramas).
+                    Fue el primer cifrado de sustitución digráfica y se usó en contextos militares.
+                    Usa 25 letras (sin J, que se convierte en I). Tradicionalmente se combina la J con la I, porque son fonéticamente similares en muchos contextos y su sustitución produce menos ambigüedad que combinar cualquier otra pareja. Por eso, toda J del mensaje se reemplaza por I antes de cifrar, y al descifrar se interpreta según el contexto.
+                </p>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="playfair-text">Texto (solo A-Z, sin espacios ni J):</label>
+                        <textarea id="playfair-text" 
+                                  rows="6" 
+                                  placeholder="Ingresa el texto aquí... (se normalizará automáticamente)"
+                                  oninput="handleTextInputPlayfair(event)"
+                                  onpaste="handlePaste(event, 'letters-playfair')"></textarea>
+                        <small>Ejemplo: "Hola Mundo" → "HOLAMVNDO" | "José" → "IOSE" (J→I)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="playfair-key">Clave (solo letras A-Z, sin J):</label>
+                        <input type="text" 
+                                id="playfair-key" 
+                                placeholder="Ej: SECRETO"
+                                pattern="[A-Za-z]+"
+                                maxlength="30"
+                                oninput="this.value = this.value.replace(/[^A-Za-z]/g, '').replace(/j/gi, 'I'); displayPlayfairMatrix(this.value);"
+                                onpaste="handlePaste(event, 'letters')"
+                                title="Solo letras A-Z permitidas (J se convierte en I)">
+                        <small>Se creará una matriz 5x5 basada en la clave. J→I automáticamente.</small>
+                    </div>
+                </div>
+
+                <div id="playfair-matrix-container" style="display: none;">
+                    <div class="matrix-box">
+                        <h4><span class="material-icons">grid_on</span> Matriz Playfair generada:</h4>
+                        <div id="playfair-matrix-display" class="matrix-grid"></div>
+                        <small>Esta matriz 5x5 se genera automáticamente a partir de tu clave.</small>
+                    </div>
+                </div>                
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="playfairEncrypt()">
+                        <span class="material-icons">lock</span> Cifrar
+                    </button>
+                    <button class="btn btn-secondary" onclick="playfairDecrypt()">
+                        <span class="material-icons">key</span> Descifrar
+                    </button>
+                    <button class="btn btn-tertiary" onclick="clearPlayfair()">
+                        <span class="material-icons">clear</span> Limpiar
+                    </button>
+                </div>
+
+                <div id="playfair-result" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">done</span> Resultado:</h3>
+                    <div class="result-content" id="playfair-result-text"></div>
+                    <button class="btn btn-small" onclick="copyToClipboard('playfair-result-text')">
+                        <span class="material-icons">content_copy</span> Copiar
+                    </button>
+                </div>
+
+                <div class="info-box">
+                    <h4><span class="material-icons">info</span> Información:</h4>
+                    <ul>
+                        <li>Cifra pares de letras en lugar de letras individuales</li>
+                        <li>La letra J se combina con I en la matriz</li>
+                        <li>Se agrega X entre letras repetidas y al final si es necesario</li>
+                        <li>Más resistente al análisis de frecuencia que cifrados monoalfabéticos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>CryptoAnalyzer - Proyecto Final de Ciberseguridad</p>
+            <p>Universidad La Salle - Arequipa</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/classic.js') }}"></script>
+</body>
+</html>

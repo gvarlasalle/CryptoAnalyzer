@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes de Auditoría - CryptoAnalyzer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Ciberseguridad</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/classic">Cifrados Clásicos</a></li>
+                <li><a href="/analysis">Criptoanálisis</a></li>
+                <li><a href="/modern">Evaluación de Fortaleza</a></li>
+                <li><a href="/benchmark">Rendimiento</a></li>
+                <li><a href="/report" class="active">Reportes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>Reportes de Auditoría Criptográfica</h1>
+            <p>Generación de reportes completos con análisis y recomendaciones de seguridad</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Configuración del Reporte -->
+        <div class="cipher-section">
+            <h2>Configuración del Reporte</h2>
+            <p class="description">
+                Configura los parámetros para generar un reporte completo de auditoría criptográfica.
+            </p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="report-title">Título del Reporte:</label>
+                    <input type="text" id="report-title" placeholder="Ej: Auditoría Criptográfica - Empresa XYZ" value="Auditoría Criptográfica">
+                </div>
+
+                <div class="form-group">
+                    <label for="report-organization">Organización:</label>
+                    <input type="text" id="report-organization" placeholder="Nombre de la organización" value="Universidad La Salle - Arequipa">
+                </div>
+
+                <div class="form-group">
+                    <label for="report-auditor">Auditor:</label>
+                    <input type="text" id="report-auditor" placeholder="Nombre del auditor" value="">
+                </div>
+
+                <div class="form-group">
+                    <label>Secciones a Incluir:</label>
+                    <div style="margin-top: 10px;">
+                        <label style="display: block; margin: 5px 0; color: #fff;">
+                            <input type="checkbox" id="include-aes" checked> Análisis AES
+                        </label>
+                        <label style="display: block; margin: 5px 0; color: #fff;">
+                            <input type="checkbox" id="include-rsa" checked> Análisis RSA
+                        </label>
+                        <label style="display: block; margin: 5px 0; color: #fff;">
+                            <input type="checkbox" id="include-benchmark" checked> Comparación de Rendimiento
+                        </label>
+                        <label style="display: block; margin: 5px 0; color: #fff;">
+                            <input type="checkbox" id="include-recommendations" checked> Recomendaciones
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4><span class="material-icons">info</span> Requisitos:</h4>
+                <ul>
+                    <li>Debes haber ejecutado al menos un análisis (AES o RSA) en la sección "Evaluación de Fortaleza"</li>
+                    <li>Opcionalmente, ejecuta benchmarks para incluir métricas de rendimiento</li>
+                    <li>El reporte se generará en formato HTML con opción de impresión/PDF</li>
+                </ul>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="generateReport()">
+                    <span class="material-icons">description</span> Generar Reporte
+                </button>
+                <button class="btn btn-secondary" onclick="previewReport()" style="display: none;" id="preview-btn">
+                    <span class="material-icons">visibility</span> Vista Previa
+                </button>
+                <button class="btn btn-tertiary" onclick="printReport()" style="display: none;" id="print-btn">
+                    <span class="material-icons">print</span> Imprimir/Guardar PDF
+                </button>
+                <button class="btn" onclick="clearStoredData()" style="background: #ff0000; border-color: #ff0000;">
+                    <span class="material-icons">delete</span> Limpiar Datos Guardados
+                </button>
+            </div>
+        </div>
+
+        <!-- Vista Previa del Reporte -->
+        <div id="report-preview" class="result-box" style="display: none;">
+            <div style="text-align: right; margin-bottom: 20px;">
+                <button class="btn btn-small" onclick="copyReportHTML()">
+                    <span class="material-icons">content_copy</span> Copiar HTML
+                </button>
+            </div>
+            
+            <div id="report-content" class="report-document">
+                <!-- Aquí se generará el contenido del reporte -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>CryptoAnalyzer - Proyecto Final de Ciberseguridad</p>
+            <p>Universidad La Salle - Arequipa</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/report.js') }}"></script>
+</body>
+</html>

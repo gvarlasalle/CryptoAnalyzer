@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoAnalyzer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Ciberseguridad</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="active">Inicio</a></li>
+                <li><a href="/classic">Cifrados Clásicos</a></li>
+                <li><a href="/analysis">Criptoanálisis</a></li>
+                <li><a href="/modern">Evaluación de Fortaleza</a></li>
+                <li><a href="/benchmark">Rendimiento</a></li>
+                <li><a href="/report">Reportes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+        <div class="hero">
+        <div class="container">
+            <h1 class="hero-title">CryptoAnalyzer</h1>
+            <p class="hero-subtitle">Analizador de Fortaleza Criptográfica</p>
+            <p class="project-subtitle">Proyecto 14</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="info-section">
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>Objetivo</h3>
+                    <p>
+                        Crear una herramienta que analice la fortaleza de diferentes algoritmos criptográficos,
+                        realice criptoanálisis de cifrados clásicos y evalúe la seguridad de implementaciones
+                        modernas.
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Tecnologías sugeridas</h3>
+                    <ul class="tech-list">
+                        <li><strong>Lenguaje:</strong> Python</li>
+                        <li><strong>Criptografía:</strong> PyCryptodome, cryptography</li>
+                        <li><strong>Análisis:</strong> NumPy para análisis estadístico</li>
+                        <li><strong>Interfaz:</strong> Flask web app o PyQt5</li>
+                        <li><strong>Visualización:</strong> Matplotlib para frecuencias</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Requisitos Funcionales</h3>
+                    <ul class="features-list">
+                        <li>1. Implementación de cifrados clásicos (César, Vigenère, Playfair).</li>
+                        <li>2. Herramientas de criptoanálisis: análisis de frecuencia, fuerza bruta.</li>
+                        <li>3. Evaluación de fortaleza de algoritmos modernos (AES, RSA).</li>
+                        <li>4. Detección de debilidades en implementaciones (padding, IV reutilización).</li>
+                        <li>5. Comparación de rendimiento entre diferentes algoritmos.</li>
+                        <li>6. Generación de reportes de auditoría criptográfica con recomendaciones.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2 class="section-title">Funcionalidades</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="material-icons feature-icon">history_edu</span>
+                    <h3>Cifrados Clásicos</h3>
+                    <p>Implementación de César, Vigenère y Playfair</p>
+                    <a href="/classic" class="btn btn-primary">Explorar</a>
+                </div>
+
+                <div class="feature-card">
+                    <span class="material-icons feature-icon">search</span>
+                    <h3>Criptoanálisis</h3>
+                    <p>Análisis de frecuencia, fuerza bruta</p>
+                    <a href="/analysis" class="btn btn-primary">Analizar</a>
+                </div>
+
+                <div class="feature-card">
+                    <span class="material-icons feature-icon">lock</span>
+                    <h3>Algoritmos Modernos y Detección de Vulnerabilidades</h3>
+                    <p>Evaluación de fortaleza de algoritmos (AES, RSA) e Identificación de debilidades en implementaciones (padding, IV reutilización) </p>
+                    <a href="/modern" class="btn btn-primary">Evaluar</a>
+                </div>
+
+                <div class="feature-card">
+                    <span class="material-icons feature-icon">speed</span>
+                    <h3>Comparación de Rendimiento</h3>
+                    <p>Benchmark de rendimiento entre diferentes algoritmos</p>
+                    <a href="/benchmark" class="btn btn-primary">Comparar</a>
+                </div>
+
+                <div class="feature-card">
+                    <span class="material-icons feature-icon">description</span>
+                    <h3>Reportes de Auditoría</h3>
+                    <p>Generación de reportes de auditoría criptográfica con recomendaciones</p>
+                    <a href="/report" class="btn btn-primary">Generar</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>CryptoAnalyzer - Proyecto Final de Ciberseguridad</p>
+            <p>Universidad La Salle - Arequipa</p>
+        </div>
+    </footer>
+</body>
+</html>

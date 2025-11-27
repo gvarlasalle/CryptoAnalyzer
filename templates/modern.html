@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Fortaleza - CryptoAnalyzer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Ciberseguridad</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/classic">Cifrados Clásicos</a></li>
+                <li><a href="/analysis">Criptoanálisis</a></li>
+                <li><a href="/modern" class="active">Evaluación de Fortaleza</a></li>      
+                <li><a href="/benchmark">Rendimiento</a></li>          
+                <li><a href="/report">Reportes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>Evaluación de Fortaleza de Algoritmos Modernos</h1>
+            <p>Análisis dinámico de seguridad y detección de vulnerabilidades en AES y RSA</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('aes-analysis')">
+                <span class="material-icons">analytics</span> Análisis AES
+            </button>
+            <button class="tab-button" onclick="showTab('rsa-analysis')">
+                <span class="material-icons">analytics</span> Análisis RSA
+            </button>
+        </div>
+
+        <!-- ANÁLISIS AES -->
+        <div id="aes-analysis" class="tab-content active">
+            <div class="cipher-section">
+                <h2>Análisis de Fortaleza AES</h2>
+                <p class="description">
+                    Realiza pruebas dinámicas sobre una implementación AES para detectar vulnerabilidades 
+                    y evaluar la fortaleza de la configuración.
+                </p>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="aes-analyze-text">Texto de Prueba:</label>
+                        <textarea id="aes-analyze-text" rows="4" placeholder="Ingresa un texto para analizar...">Este es un texto de prueba para analizar la implementación AES</textarea>
+                        <small>El texto se usará para detectar vulnerabilidades como IV reutilizado y patrones ECB</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aes-analyze-key-size">Tamaño de Clave:</label>
+                        <select id="aes-analyze-key-size">
+                            <option value="128">AES-128</option>
+                            <option value="192">AES-192</option>
+                            <option value="256" selected>AES-256</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aes-analyze-mode">Modo de Operación:</label>
+                        <select id="aes-analyze-mode">
+                            <option value="CBC" selected>CBC</option>
+                            <option value="ECB">ECB (Inseguro)</option>
+                            <option value="CFB">CFB</option>
+                            <option value="OFB">OFB</option>
+                            <option value="CTR">CTR</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aes-analyze-key">Clave (Base64):</label>
+                        <input type="text" id="aes-analyze-key" placeholder="Genera una clave" readonly>
+                        <button class="btn btn-small" onclick="generateAnalysisAESKey()">
+                            <span class="material-icons">vpn_key</span> Generar Clave
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="analyzeAES()">
+                    <span class="material-icons">science</span> Iniciar Análisis Completo
+                </button>
+
+                <div id="aes-analysis-result" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">assessment</span> Resultados del Análisis AES</h3>
+                    
+                    <!-- Puntuación General -->
+                    <div class="score-container">
+                        <div class="score-circle" id="aes-score-circle">
+                            <div class="score-value" id="aes-score-value">0</div>
+                            <div class="score-label">Puntuación</div>
+                        </div>
+                        <div class="score-details" id="aes-score-level"></div>
+                    </div>
+
+                    <!-- Métricas Técnicas -->
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <h4><span class="material-icons">key</span> Análisis de Clave</h4>
+                            <div id="aes-key-analysis"></div>
+                        </div>
+
+                        <div class="analysis-card">
+                            <h4><span class="material-icons">timeline</span> Entropía del Cifrado</h4>
+                            <div id="aes-entropy-analysis"></div>
+                        </div>
+
+                        <div class="analysis-card">
+                            <h4><span class="material-icons">donut_small</span> Distribución de Bytes</h4>
+                            <div id="aes-distribution-analysis"></div>
+                        </div>
+
+                        <div class="analysis-card">
+                            <h4><span class="material-icons">pattern</span> Detección de Patrones</h4>
+                            <div id="aes-pattern-analysis"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pruebas de Vulnerabilidades -->
+                    <div class="vulnerability-tests">
+                        <h4><span class="material-icons">bug_report</span> Pruebas de Vulnerabilidades</h4>
+                        
+                        <div class="test-result" id="aes-iv-test"></div>
+                        <div class="test-result" id="aes-ecb-test"></div>
+                    </div>
+
+                    <!-- Detección de Debilidades en Implementación -->
+                    <div class="weakness-detection">
+                        <h4><span class="material-icons">security</span> Detección de Debilidades en Implementación</h4>
+                        <div class="weakness-grid">
+                            <div class="weakness-test-card">
+                                <h5><span class="material-icons">sync</span> Reutilización de IV</h5>
+                                <div id="weakness-iv-reuse"></div>
+                            </div>
+                            
+                            <div class="weakness-test-card">
+                                <h5><span class="material-icons">view_module</span> Modo ECB</h5>
+                                <div id="weakness-ecb-mode"></div>
+                            </div>
+                            
+                            <div class="weakness-test-card">
+                                <h5><span class="material-icons">vpn_key</span> Fortaleza de Clave</h5>
+                                <div id="weakness-key-strength"></div>
+                            </div>
+                            
+                            <div class="weakness-test-card">
+                                <h5><span class="material-icons">shuffle</span> Entropía</h5>
+                                <div id="weakness-entropy"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Issues Detectados -->
+                    <div class="issues-container" id="aes-issues-container" style="display: none;">
+                        <h4><span class="material-icons">warning</span> Problemas Detectados</h4>
+                        <ul id="aes-issues-list"></ul>
+                    </div>
+
+                    <!-- Recomendaciones -->
+                    <div class="recommendations-container">
+                        <h4><span class="material-icons">lightbulb</span> Recomendaciones</h4>
+                        <div id="aes-recommendations"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANÁLISIS RSA -->
+        <div id="rsa-analysis" class="tab-content">
+            <div class="cipher-section">
+                <h2>Análisis de Fortaleza RSA</h2>
+                <p class="description">
+                    Analiza las propiedades matemáticas y de seguridad de un par de claves RSA 
+                    para detectar configuraciones débiles.
+                </p>
+
+                <div class="form-group">
+                    <label for="rsa-analyze-text">Texto de Prueba (opcional):</label>
+                    <textarea id="rsa-analyze-text" rows="3" placeholder="Ingresa un texto para probar el cifrado RSA (máx ~190 bytes)">Texto de prueba para RSA</textarea>
+                    <small>El texto se usará para validar capacidad de cifrado/descifrado</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="rsa-analyze-key-size">Tamaño de Clave:</label>
+                    <select id="rsa-analyze-key-size">
+                        <option value="1024">RSA-1024 (Inseguro)</option>
+                        <option value="2048" selected>RSA-2048</option>
+                        <option value="4096">RSA-4096</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="generateAnalysisRSAKey()">
+                        <span class="material-icons">vpn_key</span> Generar Par de Claves
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label for="rsa-analyze-padding">Esquema de Padding:</label>
+                    <select id="rsa-analyze-padding">
+                        <option value="OAEP" selected>OAEP (Recomendado)</option>
+                        <option value="PKCS1v15">PKCS#1 v1.5 (Legacy - Vulnerable)</option>
+                    </select>
+                    <small>OAEP es el estándar seguro actual. PKCS#1 v1.5 tiene vulnerabilidades conocidas.</small>
+                </div>
+
+                <div id="rsa-analyze-keys" style="display: none; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label>Clave Pública:</label>
+                        <textarea id="rsa-analyze-public-key" rows="6" readonly></textarea>
+                        <button class="btn btn-small" onclick="copyToClipboard('rsa-analyze-public-key')">
+                            <span class="material-icons">content_copy</span> Copiar
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Clave Privada <span style="color: #00ff00;">(Mantener segura)</span>:</label>
+                        <textarea id="rsa-analyze-private-key" rows="6" readonly></textarea>
+                        <button class="btn btn-small" onclick="copyToClipboard('rsa-analyze-private-key')">
+                            <span class="material-icons">content_copy</span> Copiar
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="analyzeRSA()" id="rsa-analyze-btn" style="display: none;">
+                    <span class="material-icons">science</span> Iniciar Análisis Completo
+                </button>
+
+                <!-- RESULTADOS RSA -->
+                <div id="rsa-analysis-result" class="result-box" style="display: none;">
+                    <h3><span class="material-icons">assessment</span> Resultados del Análisis RSA</h3>
+                    
+                    <!-- Puntuación General -->
+                    <div class="score-container">
+                        <div class="score-circle" id="rsa-score-circle">
+                            <div class="score-value" id="rsa-score-value">0</div>
+                            <div class="score-label">Puntuación</div>
+                        </div>
+                        <div class="score-details" id="rsa-score-level"></div>
+                    </div>
+
+                    <!-- Propiedades de la Clave -->
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <h4><span class="material-icons">straighten</span> Longitud de Clave</h4>
+                            <div id="rsa-bit-length"></div>
+                        </div>
+
+                        <div class="analysis-card">
+                            <h4><span class="material-icons">functions</span> Exponente Público</h4>
+                            <div id="rsa-exponent"></div>
+                        </div>
+
+                        <div class="analysis-card">
+                            <h4><span class="material-icons">shield</span> Estado de Seguridad</h4>
+                            <div id="rsa-security-status"></div>
+                        </div>
+
+                        <div class="analysis-card">
+                            <h4><span class="material-icons">schedule</span> Proyección Temporal</h4>
+                            <div id="rsa-time-projection"></div>
+                        </div>
+                    </div>
+
+                    <!-- Detección de Debilidades -->
+                    <div class="weakness-detection">
+                        <h4><span class="material-icons">bug_report</span> Detección de Debilidades en Implementación</h4>
+                        <div class="weakness-grid" id="rsa-weaknesses"></div>
+                    </div>
+
+                    <!-- Issues Detectados -->
+                    <div class="issues-container" id="rsa-issues-container" style="display: none;">
+                        <h4><span class="material-icons">warning</span> Problemas Detectados</h4>
+                        <ul id="rsa-issues-list"></ul>
+                    </div>
+
+                    <!-- Recomendaciones -->
+                    <div class="recommendations-container">
+                        <h4><span class="material-icons">lightbulb</span> Recomendaciones</h4>
+                        <div id="rsa-recommendations"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>CryptoAnalyzer - Proyecto Final de Ciberseguridad</p>
+            <p>Universidad La Salle - Arequipa</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modern.js') }}"></script>
+</body>
+</html>
