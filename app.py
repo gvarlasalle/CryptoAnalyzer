@@ -310,44 +310,9 @@ def benchmark_rsa():
    
 
 print("TODAS LAS RUTAS DEFINIDAS")
-'''
 if __name__ == '__main__':
     print("=" * 50)
     print("Iniciando CryptoAnalyzer...")
     print("Abre tu navegador en: http://localhost:5000")
     print("=" * 50)
     app.run(debug=True, host='0.0.0.0', port=5000)
-'''
-
-# Agregar al final de app.py temporalmente
-if __name__ == '__main__':
-    print("\n" + "="*60)
-    print("AUDITORÍA DE RUTAS EN APP.PY")
-    print("="*60)
-    
-    routes = []
-    for rule in app.url_map.iter_rules():
-        routes.append({
-            'endpoint': rule.endpoint,
-            'methods': ', '.join(rule.methods - {'HEAD', 'OPTIONS'}),
-            'path': str(rule)
-        })
-    
-    # Ordenar por path
-    routes.sort(key=lambda x: x['path'])
-    
-    print("\n📍 RUTAS HTML (páginas):")
-    for r in routes:
-        if not r['path'].startswith('/api'):
-            print(f"  {r['path']:30} → {r['endpoint']:20} [{r['methods']}]")
-    
-    print("\n🔌 RUTAS API (endpoints):")
-    for r in routes:
-        if r['path'].startswith('/api'):
-            print(f"  {r['path']:40} → {r['endpoint']:30} [{r['methods']}]")
-    
-    print("\n" + "="*60)
-    print("EJECUTANDO FLASK...")
-    print("="*60 + "\n")
-    
-    app.run(debug=True)
